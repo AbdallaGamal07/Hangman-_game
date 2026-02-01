@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HANGMAN</title>
+    <style>
+      html{
+background-color:	#A9A9A9;
+text-align:center;
+}
+body{
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+gap:60px;
+margin:20px;
+}
+h1{
+    font-size:80px;
+}
+h2{
+    font-size:35px;
+}  
+.background{
+    display:flex;
+    flex-direction:column;
+    gap:40px;
+    padding:10px;
+    border-radius: 30px;
+    border: 5px solid orange;
+    background-color: #ffff99;
+    width: 90%;
+    height: 1200px;
+    z-index: 0;
+}
+#title{
+    background-color:orange;
+    border-radius:10px;
+    border:5px solid #A9A9A9;
+}
+.header{
+    font-size:35px;
+}
+#guess{
+    font-size:31px;
+}
+#letter-input{
+    font-size:31px;
+    width:70px;
+    border-radius:10px;
+}
+#wordContainer{
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    justify-content: center;
+}
+.cell{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    font-size:40px;
+height:70px;
+width:70px;
+border:5px solid black;
+background-color:white;
+border-radius:10px;
+}
+.hidden{
+     visibility:hidden; 
+}
+#wrongMessage{
+  visibility:hidden;
+    color:red;
+    font-size:40px;
+    position:absolute;
+    top:490px;
+    left: 899px;
+}
+.message{
+    font-size:60px;
+    background-color:orange;
+    color:#ffff99;
+    border:5px solid #A9A9A9;
+    padding:7px;
+    border-radius: 5px;
+}
+#losemessage{
+    position:absolute ;
+    bottom:210px;
+    left:800px;
+}
+#resetbtn{
+    height:80px;
+    width:250px;
+    background-color: red;
+    border:5px solid black;
+    position:absolute;
+    top:950px;
+    left:1600px;
+font-size:40px;
+color:#ffff99;
+cursor:pointer;
+}
+#resetbtn:hover{
+background-color: #ffaa00;
+}
+    </style>
+</head>
+<body>
+    <div class="background">
+        <h1><span id="title">Welcome to HANGMAN!</span></h1>
+        <div><label class="header">Player 1 please enter the word(Player 2 don't look): </label>
+        <input class="header" id="wordinput" placeholder="Enter word here"/></div>
+        <h2 id="wordDisplay"> </h2>
+        <div><label class="hidden" id="guess"> Enter your letter to guess: </label>
+        <input class="hidden" id="letter-input" maxlength="1"/></div><br>
+        <div id="wordContainer">
+        </div>
+        <p class="hidden" id="tries" style="font-size:40px">Tries: </p>
+        <p id="wrongMessage">Wrong Guess</p>
+        <p id="winmessage" style="visibility: hidden;" ><span class="message">YOU WIN!</span></p>
+        <p id="losemessage" style="visibility: hidden;" ><span class="message">OUT OF TRIES!</span></p>
+        <button id="resetbtn" onclick="reset()">Reset</button>
+    </div>
+    <script>
+        document.getElementById("wordinput").addEventListener("keydown",render);
+        let word="";
+        let tries;
+        function render(event){
+            if(event.key=="Enter"){
+                 word=document.getElementById("wordinput").value;
+                 document.getElementById("wordinput").value="";
+                let wordEncrypt="";
+                for(let i=0;i<word.length;i++){
+                    wordEncrypt+="*";
+                }
+                document.getElementById("wordDisplay").innerHTML="The word to guess is: "+wordEncrypt;
+document.getElementById("guess").style.visibility="visible";
+document.getElementById("letter-input").style.visibility="visible";
+                for(let i=0;i<word.length;i++){
+    let box=document.createElement("div");
+    box.className="cell";
+    box.id="cell-"+(i+1);
+    document.getElementById("wordContainer").appendChild(box);
+}
+tries=word.length+2;
+document.getElementById("letter-input").addEventListener("keydown",checkletter);
+document.getElementById("tries").innerHTML="Tries: "+tries;
+document.getElementById("tries").style.visibility = "visible";
+            }
+        }
+        function checkletter(event){
+            if(event.key=="Enter"){
+let letter=document.getElementById("letter-input").value;
+let flag=false;
+for(let i=0;i<word.length;i++){
+    if(word[i]==letter||word[i]==letter.toLowerCase()||word[i]==letter.toUpperCase()){
+        document.getElementById("cell-"+(i+1)).innerHTML=letter;
+        flag=true;
+    }
+}
+if(!flag){
+    updateTries();
+}
+if(checkWin()){
+document.getElementById("winmessage").style.visibility="visible";
+setTimeout(function() {
+    reset();
+}, 15000);
+return;
+}
+            }
+        }
+        function updateTries(){
+tries--;
+document.getElementById("tries").innerHTML="Tries: "+tries;
+document.getElementById("wrongMessage").style.visibility="visible";
+setTimeout(function() {
+    document.getElementById("wrongMessage").style.visibility = "hidden";
+}, 3000);
+        }
+        function checkWin(){
+let flag=true;
+for(let i=0;i<word.length;i++){
+    if(document.getElementById("cell-"+(i+1)).innerHTML.trim()===""){
+    flag=false;
+break;
+    }
+}
+if(flag)
+return true;
+else
+return false;
+        }
+        function reset(){
+            document.getElementById("tries").style.visibility = "hidden";
+            document.getElementById("guess").style.visibility="hidden";
+document.getElementById("letter-input").style.visibility="hidden";
+document.getElementById("letter-input").value="";
+document.getElementById("winmessage").style.visibility="hidden";
+document.getElementById("wordContainer").innerHTML = "";
+document.getElementById("wordDisplay").innerHTML = "";
+word="";
+
+tries=0;
+        }
+    </script>
+</body>
+</html>
